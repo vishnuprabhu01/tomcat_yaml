@@ -2,8 +2,8 @@
 - name: installing tomcat on Centos 7 and ubuntu 20
   hosts: all
   become: yes
-  vars_file:
-  - defaults.yml   
+  vars_files:
+    - defaults.yml   
   tasks:
     - name: installing java 
       ansible.builtin.yum:
