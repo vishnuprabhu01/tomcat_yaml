@@ -1,0 +1,73 @@
+---
+- name: installing tomcat on Centos 7 and ubuntu 20
+  hosts: all
+  become: yes
+  vars:
+    java_version: openjdk-8-jdk 
+    java_version: java-1.8.0-openjdk-devel
+    tomcat_group:  tomcat 
+    tomcat_user:  tomcat 
+    tomcat_shell:  /bin/false
+    tomcat_home: /opt/tomcat 
+    tomcat_dowload_version: 9.0.62 
+    tomcat_web_location: /opt/tomcat/webapps/
+    tomcat_service_file: /etc/systemd/system/
+  tasks:
+    - name: installing java 
+      ansible.builtin.yum:
+        update_cache: yes
+        name: "{{ java_version }}"
+        state: present
+    - name: add tomcat user with group name tomcat
+      ansible.builtin.user:
+        name: "{{ tomcat_user }}"
+        comment: tomcat usr
+        group: "{{ tomcat_group }}"
+        shell: "{{ tomcat_shell }}"
+        home: "{{ tomcat_home }}"
+    - name: check if the tomcat directory present
+      ansible.builtin.stat:
+        path: "{{ tomcat_home }}"
+      register: tomcat_file_present  
+    - name: Dowload and untar
+      ansible.builtin.unarchive:
+        src: "https://dlcdn.apache.org/tomcat/tomcat-9/v{{tomcat_dowload_version}}/bin/apache-tomcat-{{tomcat_dowload_version}}.tar.gz"
+        dest: "{{ tomcat_home }}"
+        remote_src: yes
+    - name: create the soft link to tomcat dir
+      ansible.builtin.file:
+        src: "{{ tomcat_home }}/apache-tomcat-{{tomcat_dowload_version}}"
+        dest: "{{ tomcat_home }}/latest"
+        state: link
+    - name: change the tomcat dir owner permission
+      ansible.builtin.file:
+        path: "{{ tomcat_home }}"
+        recurse: yes
+        state: directory
+        owner: "{{ tomcat_user }}"
+    - name: find the .sh files on the path 
+      find:
+        paths: "{{ tomcat_home }}/latest/bin"
+        patterns: "*.sh"
+      register: output
+    - set_fact:
+        tomcat_executes: "{{ output.files | map(attribute='path') | list}}"
+    - name: change the file permission
+      ansible.builtin.file:
+        src: "{{ item }}"
+        path: "{{ tomcat_home }}/latest/bin"
+        mode: 0751
+      with_items: "{{tomcat_executes}}"
+    - name: creating the service file
+      ansible.builtin.copy:
+        src: tomcat.service
+        dest: "{{ tomcat_service_file }}"
+        remote_src: yes
+    - name: Make sure a service is running
+      ansible.builtin.systemd:
+        state: started
+        name: tomcat
+        daemon_reload: yes
+
+
+     

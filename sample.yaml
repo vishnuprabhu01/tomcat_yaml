@@ -1,0 +1,78 @@
+ when: not tomcat_file_present.stat.exists
+    - name: Recursively change ownership of a directory
+      ansible.builtin.file:
+        path: "{{ tomcat_home }}"
+        state: directory
+        recurse: yes
+        group: "{{ tomcat_group }}"
+      when: not tomcat_file_present.stat.exists  
+    - name: Recursively read permission to /conf directory
+      ansible.builtin.file:
+        path: "{{ tomcat_home }}/conf"
+        state: directory
+        recurse: yes
+        mode: g+r 
+      when: not tomcat_file_present.stat.exists  
+    - name: execute permission to /conf directory
+      ansible.builtin.file:
+        path: "{{ tomcat_home }}/conf"
+        state: directory
+        mode: g+x
+      when: not tomcat_file_present.stat.exists  
+    - name:  Recursively changing the folders owner
+      ansible.builtin.file:
+        path: "{{ tomcat_home }}/webapps"
+        recurse: yes
+        owner: "{{ tomcat_user }}"
+      when: not tomcat_file_present.stat.exists  
+    - name:  Recursively changing the folders owner
+      ansible.builtin.file:
+        path: "{{ tomcat_home }}/tmp"
+        recurse: yes
+        owner: "{{ tomcat_user }}"
+      when: not tomcat_file_present.stat.exists  
+    - name:  Recursively changing the folders owner
+      ansible.builtin.file:
+        path: "{{ tomcat_home }}/work"
+        recurse: yes
+        owner: "{{ tomcat_user }}"
+      when: not tomcat_file_present.stat.exists  
+    - name:  Recursively changing the folders owner
+      ansible.builtin.file:
+        path: "{{ tomcat_home }}/logs"
+        recurse: yes
+        owner: "{{ tomcat_user }}"  
+      when: not tomcat_file_present.stat.exists     
+    - name: creating tomcat service
+      ansible.builtin.copy:
+        src: ./tomcat.service
+        dest: /etc/systemd/system/
+      notify:
+      - Restart tomcat    
+    - name: tomcat restart
+      ansible.builtin.systemd:
+        state: started
+        name: tomcat
+        daemon_reload: yes  
+    - name: Create a directory if it does not exist
+      file:
+        path: /var/lib/OpenMRS
+        state: directory
+        owner: "{{ tomcat_user }}"
+        group: "{{ tomcat_group }}"
+        recurse: yes          
+    - name: Download war file
+      get_url:
+        url: https://sourceforge.net/projects/openmrs/files/releases/OpenMRS_Platform_2.5.0/openmrs.war
+        dest: "{{ tomcat_web_location }}/openmrs.war"
+        remote_src: yes
+    - name: Change file ownership, group and permissions
+      file:
+        path: "{{tomcat_web_location }}/openmrs.war"
+        owner: "{{ tomcat_user }}"
+        group: "{{ tomcat_group }}"
+  handlers:
+    - name: Restart tomcat
+      ansible.builtin.service:
+        name: tomcat
+        state: restarted 
