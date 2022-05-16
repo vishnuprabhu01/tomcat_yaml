@@ -3,13 +3,20 @@
   hosts: all
   become: yes
   vars_files:
-    - defaults.yml   
+    - vars/defaults.yml   
   tasks:
     - name: installing java 
       ansible.builtin.yum:
         update_cache: yes
         name: "{{ java_version }}"
         state: present
+      when: ansible_facts['distribution'] == "CentOS"
+    - name: installing java 
+      ansible.builtin.apt:
+        update_cache: yes
+        name: "{{ java_version }}"
+        state: present  
+      when: ansible_facts['distribution'] == "ubuntu"
     - name: add tomcat user with group name tomcat
       ansible.builtin.user:
         name: "{{ tomcat_user }}"
@@ -26,17 +33,20 @@
         src: "https://dlcdn.apache.org/tomcat/tomcat-9/v{{tomcat_dowload_version}}/bin/apache-tomcat-{{tomcat_dowload_version}}.tar.gz"
         dest: "{{ tomcat_home }}"
         remote_src: yes
+      when: not tomcat_file_present.stat.exists
     - name: create the soft link to tomcat dir
       ansible.builtin.file:
         src: "{{ tomcat_home }}/apache-tomcat-{{tomcat_dowload_version}}"
         dest: "{{ tomcat_home }}/latest"
         state: link
+      when: not tomcat_file_present.stat.exists  
     - name: change the tomcat dir owner permission
       ansible.builtin.file:
         path: "{{ tomcat_home }}"
         recurse: yes
         state: directory
         owner: "{{ tomcat_user }}"
+      when: not tomcat_file_present.stat.exists  
     - name: find the .sh files on the path 
       find:
         paths: "{{ tomcat_home }}/latest/bin"
@@ -44,31 +54,39 @@
       register: output
     - set_fact:
         tomcat_executes: "{{ output.files | map(attribute='path') | list}}"
+      when: not tomcat_file_present.stat.exists  
     - name: change the file permission
       ansible.builtin.file:
         src: "{{ item }}"
         path: "{{ tomcat_home }}/latest/bin"
         mode: 0751
       with_items: "{{tomcat_executes}}"
+      when: not tomcat_file_present.stat.exists
     - name: creating the service file
       ansible.builtin.copy:
-        src: tomcat.service
+        src: files/tomcat.service
         dest: "{{ tomcat_service_file }}"
+      when: ansible_facts['distribution'] == "CentOS"  
+    - name: creating the service file
+      ansible.builtin.copy:
+        src: files/tomcat.service.ubuntu
+        dest: "{{ tomcat_service_file }}"  
+      when: ansible_facts['distribution'] == "ubuntu"  
     - name: tomcat service start
       ansible.builtin.service:
        name: tomcat
        state: started       
     - name: copy the users credentials
       ansible.builtin.copy:
-        src: tomcat-users.xml
+        src: files/tomcat-users.xml
         dest: "{{ tomcat_users_login_info }}" 
     - name: manager web interface login
       ansible.builtin.copy:
-        src: manager.context.xml
+        src: files/manager.context.xml
         dest: "{{ tomcat_manager_context }}" 
     - name: host-manager web interface login
       ansible.builtin.copy:
-        src: manager.context.xml
+        src: files/manager.context.xml
         dest: "{{ tomcat_host_manager_context }}"              
   handlers:      
     - name: Make sure a service is running

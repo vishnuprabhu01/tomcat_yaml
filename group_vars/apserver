@@ -3,8 +3,6 @@
     tomcat_user:  tomcat 
     tomcat_shell:  /bin/false
     tomcat_home: /opt/tomcat 
-    tomcat_dowload_version: 9.0.62 
-    tomcat_web_location: /opt/tomcat/webapps/
     tomcat_service_file: /etc/systemd/system/tomcat.service
     tomcat_users_login_info: /opt/tomcat/latest/conf/tomcat-users.xml
     tomcat_manager_context: /opt/tomcat/latest/webapps/manager/META-INF/context.xml
