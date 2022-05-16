@@ -1,5 +1,4 @@
     java_version: java-1.8.0-openjdk-devel
-    tomcat_group:  tomcat 
     tomcat_user:  tomcat 
     tomcat_shell:  /bin/false
     tomcat_home: /opt/tomcat 

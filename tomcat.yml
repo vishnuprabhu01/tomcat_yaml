@@ -1,9 +1,7 @@
 ---
 - name: installing tomcat on Centos 7 and ubuntu 20
   hosts: all
-  become: yes
-  vars_files:
-    - vars/defaults.yml   
+  become: yes  
   tasks:
     - name: installing java 
       ansible.builtin.yum:
@@ -21,7 +19,6 @@
       ansible.builtin.user:
         name: "{{ tomcat_user }}"
         comment: tomcat usr
-        group: "{{ tomcat_group }}"
         shell: "{{ tomcat_shell }}"
         home: "{{ tomcat_home }}"
     - name: check if the tomcat directory present
