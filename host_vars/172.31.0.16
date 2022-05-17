@@ -1,2 +1,1 @@
-java_version: java-1.8.0-openjdk-devel
 tomcat_download_version: '9.0.48'

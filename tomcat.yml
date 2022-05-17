@@ -6,13 +6,13 @@
     - name: installing java 
       ansible.builtin.yum:
         update_cache: yes
-        name: "{{ java_version }}"
+        name: java-1.8.0-openjdk-devel
         state: present
       when: ansible_facts['distribution'] == "CentOS"
     - name: installing java 
       ansible.builtin.apt:
         update_cache: yes
-        name: "{{ java_version }}"
+        name: openjdk-11-jdk
         state: present  
       when: ansible_facts['distribution'] == "Ubuntu"
     - name: add tomcat user with group name tomcat
