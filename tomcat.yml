@@ -63,16 +63,16 @@
       ansible.builtin.copy:
         src: files/tomcat.service
         dest: "{{ tomcat_service_file }}"
-      when: ansible_facts['distribution'] == "CentOS"  
+      when: ansible_facts['distribution'] == "CentOS" 
+      notify:
+        - Make sure a service is running 
     - name: creating the service file
       ansible.builtin.copy:
         src: files/tomcat.service.ubuntu
         dest: "{{ tomcat_service_file }}"  
-      when: ansible_facts['distribution'] == "ubuntu"  
-    - name: tomcat service start
-      ansible.builtin.service:
-       name: tomcat
-       state: started       
+      when: ansible_facts['distribution'] == "ubuntu"   
+      notify:
+        - Make sure a service is running   
     - name: copy the users credentials
       ansible.builtin.copy:
         src: files/tomcat-users.xml
