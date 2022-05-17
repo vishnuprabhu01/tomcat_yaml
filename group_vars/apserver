@@ -8,4 +8,4 @@
     tomcat_manager_context: /opt/tomcat/latest/webapps/manager/META-INF/context.xml
     tomcat_host_manager_context: /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
     tomcat_download_version: '9.0.48'
- 
+    java_version: java-1.8.0-openjdk-devel
