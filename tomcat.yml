@@ -32,7 +32,7 @@
         remote_src: yes
     - name: create the soft link to tomcat dir
       ansible.builtin.file:
-        src: "{{ tomcat_home }}/apache-tomcat-{{tomcat_dowload_version}}"
+        src: "{{ tomcat_home }}/apache-tomcat-{{tomcat_download_version}}"
         dest: "{{ tomcat_home }}/latest"
         state: link
         
