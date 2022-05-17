@@ -14,7 +14,7 @@
         update_cache: yes
         name: "{{ java_version }}"
         state: present  
-      when: ansible_facts['distribution'] == "ubuntu"
+      when: ansible_facts['distribution'] == "Ubuntu"
     - name: add tomcat user with group name tomcat
       ansible.builtin.user:
         name: "{{ tomcat_user }}"
@@ -69,7 +69,7 @@
       ansible.builtin.copy:
         src: files/tomcat.service.ubuntu
         dest: "{{ tomcat_service_file }}"  
-      when: ansible_facts['distribution'] == "ubuntu"   
+      when: ansible_facts['distribution'] == "Ubuntu"   
       notify:
         - Make sure a service is running   
     - name: copy the users credentials
