@@ -35,14 +35,14 @@
         src: "{{ tomcat_home }}/apache-tomcat-{{tomcat_dowload_version}}"
         dest: "{{ tomcat_home }}/latest"
         state: link
-      when: not tomcat_file_present.stat.exists  
+        
     - name: change the tomcat dir owner permission
       ansible.builtin.file:
         path: "{{ tomcat_home }}"
         recurse: yes
         state: directory
         owner: "{{ tomcat_user }}"
-      when: not tomcat_file_present.stat.exists  
+        
     - name: find the .sh files on the path 
       find:
         paths: "{{ tomcat_home }}/latest/bin"
@@ -50,14 +50,14 @@
       register: output
     - set_fact:
         tomcat_executes: "{{ output.files | map(attribute='path') | list}}"
-      when: not tomcat_file_present.stat.exists  
+      
     - name: change the file permission
       ansible.builtin.file:
         src: "{{ item }}"
         path: "{{ tomcat_home }}/latest/bin"
         mode: 0751
       with_items: "{{tomcat_executes}}"
-      when: not tomcat_file_present.stat.exists
+      
     - name: creating the service file
       ansible.builtin.copy:
         src: files/tomcat.service
