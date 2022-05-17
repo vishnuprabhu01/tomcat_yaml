@@ -1,2 +1,3 @@
 tomcat_download_version: '9.0.44'
+java_home: /usr/lib/jvm/jre
 

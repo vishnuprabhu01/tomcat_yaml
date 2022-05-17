@@ -9,3 +9,6 @@
     tomcat_host_manager_context: /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
     tomcat_download_version: '9.0.48'
     java_version: java-1.8.0-openjdk-devel
+    java_home: /usr/lib/jvm/jre
+    java_opts: -Djava.security.egd=file:///dev/urandom
+    tomcat_service_local: templates/tomcat.service.j2

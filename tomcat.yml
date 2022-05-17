@@ -59,17 +59,9 @@
       with_items: "{{tomcat_executes}}"
       when: not tomcat_file_present.stat.exists
     - name: creating the service file
-      ansible.builtin.copy:
-        src: files/tomcat.service
-        dest: "{{ tomcat_service_file }}"
-      when: ansible_facts['distribution'] == "CentOS" 
-      notify:
-        - Make sure a service is running 
-    - name: creating the service file
-      ansible.builtin.copy:
-        src: files/tomcat.service.ubuntu
+      ansible.builtin.template:
+        src: "{{tomcat_service_local}}"
         dest: "{{ tomcat_service_file }}"  
-      when: ansible_facts['distribution'] == "Ubuntu"   
       notify:
         - Make sure a service is running   
     - name: copy the users credentials
