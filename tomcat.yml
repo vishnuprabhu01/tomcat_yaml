@@ -23,7 +23,7 @@
         home: "{{ tomcat_home }}"
     - name: check if the tomcat directory present
       ansible.builtin.stat:
-        path: "{{ tomcat_home }}"
+        path: "{{ tomcat_file_check }}"
       register: tomcat_file_present  
     - name: Dowload and untar
       ansible.builtin.unarchive:
