@@ -27,7 +27,7 @@
       register: tomcat_file_present  
     - name: Dowload and untar
       ansible.builtin.unarchive:
-        src: "https://dlcdn.apache.org/tomcat/tomcat-9/v{{tomcat_dowload_version}}/bin/apache-tomcat-{{tomcat_dowload_version}}.tar.gz"
+        src: "https://archive.apache.org/dist/tomcat/tomcat-9/v{{tomcat_download_version}}/bin/apache-tomcat-{{tomcat_download_version}}.tar.gz"
         dest: "{{ tomcat_home }}"
         remote_src: yes
       when: not tomcat_file_present.stat.exists
