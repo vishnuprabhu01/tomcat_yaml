@@ -1,0 +1,15 @@
+pipeline{
+    agent { label Ansible_control}
+    stages{
+        stage('git clone'){
+            steps{
+                git 'https://github.com/vishnuprabhu01/tomcat_yaml.git'
+            }
+        }
+        stage('execute ansible'){
+            steps{
+                ansiblePlaybook credentialsId: '1b3f1002-6a01-496f-8a2f-7eef2d4c76ab', inventory: 'hosts', playbook: ''
+            }
+        }
+    }
+}
