@@ -8,8 +8,9 @@ pipeline{
         }
         stage('execute ansible'){
             steps{
-                ansiblePlaybook credentialsId: '1b3f1002-6a01-496f-8a2f-7eef2d4c76ab', inventory: 'hosts', playbook: ''
+                sh ansible-playbook -i hosts tomcat.yml
             }
         }
     }
 }
+
