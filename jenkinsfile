@@ -1,5 +1,5 @@
 pipeline{
-    agent { label Ansible_control}
+    agent { label 'Ansible_control'}
     stages{
         stage('git clone'){
             steps{
